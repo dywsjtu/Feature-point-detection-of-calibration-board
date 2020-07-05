@@ -1,4 +1,5 @@
-all:baseline_opencv baseline_quadratic
+# all:baseline_opencv baseline_quadratic
+all:baseline_opencv
 
 baseline_opencv:baseline_opencv.cpp
 	g++ $$(pkg-config --cflags --libs opencv4) -std=c++11 baseline_opencv.cpp -o baseline_opencv
