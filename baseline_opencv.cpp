@@ -95,7 +95,7 @@ vector<Point2f> subPixel(vector<Point2f> corners)
     int radius = 5;
     for (size_t i = 0; i < corners.size(); i++)
     {
-        circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+        // circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
     }
 
     return corners;
