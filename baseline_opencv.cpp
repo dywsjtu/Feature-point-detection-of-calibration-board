@@ -14,33 +14,41 @@ using namespace cv;
 using namespace std;
 
 Mat src, src_gray, cp;
-int maxCorners = 20;
+int maxCorners = 16;
 RNG rng(12345);
-void goodFeaturesToTrack_Demo(int, void *);
+bool point_comparator(const cv::Point2f &a, const cv::Point2f &b);
 
-    int main(int argc, char **argv)
+vector<Point2f> findCorner(int, void *);
+vector<Point2f> subPixel(vector<Point2f>);
+
+int main(int argc, char **argv)
 {
-    src = imread(argv[1]);
-    if (src.empty())
+    Mat source = imread(argv[1]);
+    if (source.empty())
     {
         cout << "Could not open or find the image!\n"
              << endl;
         return -1;
     }
+    // src = source;
+    resize(source, src, Size(1280, 720), INTER_AREA);
+    maxCorners = atoi(argv[3]);
+    cout << "Size: " << src.size() << ";" << maxCorners << endl;
     cvtColor(src, src_gray, COLOR_BGR2GRAY);
-    goodFeaturesToTrack_Demo(0, 0);
+    vector<Point2f> corners = findCorner(0, 0);
+    corners = subPixel(corners);
     imwrite(argv[2], cp);
     return 0;
 }
 
-void goodFeaturesToTrack_Demo(int, void *)
+vector<Point2f> findCorner(int, void *)
 {
     maxCorners = MAX(maxCorners, 1);
     vector<Point2f> corners;
     double qualityLevel = 0.01;
-    double minDistance = 10;
-    int blockSize = 3, gradientSize = 3;
-    int useHarrisDetector = 0;
+    double minDistance = 15;
+    int blockSize = 5, gradientSize = 5;
+    int useHarrisDetector = 1;
     double k = 0.04;
     cp = src.clone();
     CornerPixel(src_gray,
@@ -54,14 +62,20 @@ void goodFeaturesToTrack_Demo(int, void *)
                 useHarrisDetector,
                 k);
     cout << "** Number of corners detected: " << corners.size() << endl;
-    int radius = 4;
-    for (size_t i = 0; i < corners.size(); i++)
-    {
-        circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
-    }
-    int winSize = 5;
-    int maxCount = 40;
-    double epsilon = 0.001;
+    // int radius = 2;
+    // for (size_t i = 0; i < corners.size(); i++)
+    // {
+    //     circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    // }
+
+    return corners;
+}
+
+vector<Point2f> subPixel(vector<Point2f> corners)
+{
+    int winSize = 8;
+    int maxCount = 200;
+    double epsilon = 0.00001;
     cvtColor(src, src_gray, COLOR_BGR2GRAY);
     CornerSubPix(src_gray, corners, winSize, maxCount, epsilon);
 
@@ -70,8 +84,23 @@ void goodFeaturesToTrack_Demo(int, void *)
     // TermCriteria criteria = TermCriteria(TermCriteria::EPS + TermCriteria::COUNT, 40, 0.001);
     // cornerSubPix(src_gray, corners, winSize, zeroZone, criteria);
 
+    std::sort(corners.begin(), corners.end(), point_comparator);
+
     for (size_t i = 0; i < corners.size(); i++)
     {
-        cout << " -- Refined Corner [" << i << "]  (" << corners[i].x << "," << corners[i].y << ")" << endl;
+        // cout << " -- Refined Corner [" << i << "]  (" << corners[i].x << "," << corners[i].y << ")" << endl;
+        cout << "[" << i << "]" << std::endl << corners[i].x << std::endl << corners[i].y << endl;
     }
+
+    int radius = 5;
+    for (size_t i = 0; i < corners.size(); i++)
+    {
+        circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    }
+
+    return corners;
+}
+
+bool point_comparator(const cv::Point2f &a, const cv::Point2f &b) {
+    return (a.y + 10.0 < b.y) || ((a.y < b.y + 10.0) && a.x < b.x);
 }
