@@ -31,7 +31,7 @@ int main(int argc, char **argv)
         return -1;
     }
     // src = source;
-    resize(source, src, Size(1280, 720), INTER_AREA);
+    resize(source, src, Size(1280, 720));
     maxCorners = atoi(argv[3]);
     cout << "Size: " << src.size() << ";" << maxCorners << endl;
     cvtColor(src, src_gray, COLOR_BGR2GRAY);
@@ -46,7 +46,7 @@ vector<Point2f> findCorner(int, void *)
     maxCorners = MAX(maxCorners, 1);
     vector<Point2f> corners;
     double qualityLevel = 0.01;
-    double minDistance = 15;
+    double minDistance = 5;
     int blockSize = 5, gradientSize = 5;
     int useHarrisDetector = 1;
     double k = 0.04;
@@ -62,6 +62,14 @@ vector<Point2f> findCorner(int, void *)
                 useHarrisDetector,
                 k);
     cout << "** Number of corners detected: " << corners.size() << endl;
+
+    // for (size_t i = 0; i < corners.size(); i++)
+    // {
+    //     // cout << " -- Refined Corner [" << i << "]  (" << corners[i].x << "," << corners[i].y << ")" << endl;
+    //     cout << "[" << i << "]" << std::endl
+    //          << corners[i].x << std::endl
+    //          << corners[i].y << endl;
+    // }
     // int radius = 2;
     // for (size_t i = 0; i < corners.size(); i++)
     // {
@@ -73,7 +81,7 @@ vector<Point2f> findCorner(int, void *)
 
 vector<Point2f> subPixel(vector<Point2f> corners)
 {
-    int winSize = 8;
+    int winSize = 5;
     int maxCount = 200;
     double epsilon = 0.00001;
     cvtColor(src, src_gray, COLOR_BGR2GRAY);
@@ -92,11 +100,11 @@ vector<Point2f> subPixel(vector<Point2f> corners)
         cout << "[" << i << "]" << std::endl << corners[i].x << std::endl << corners[i].y << endl;
     }
 
-    int radius = 5;
-    for (size_t i = 0; i < corners.size(); i++)
-    {
-        circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
-    }
+    // int radius = 5;
+    // for (size_t i = 0; i < corners.size(); i++)
+    // {
+    //     circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+    // }
 
     return corners;
 }
