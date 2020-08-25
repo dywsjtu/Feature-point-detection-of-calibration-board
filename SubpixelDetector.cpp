@@ -45,7 +45,7 @@ vector<Point2f> findCorner(int, void *)
 {
     maxCorners = MAX(maxCorners, 1);
     vector<Point2f> corners;
-    double qualityLevel = 0.01;
+    double qualityLevel = 0.02;
     double minDistance = 5;
     int blockSize = 5, gradientSize = 5;
     int useHarrisDetector = 1;
@@ -62,6 +62,8 @@ vector<Point2f> findCorner(int, void *)
                 useHarrisDetector,
                 k);
     cout << "** Number of corners detected: " << corners.size() << endl;
+
+    // circle(src_gray, corners[1], 5, Scalar(0, 0, 255), FILLED);
 
     // for (size_t i = 0; i < corners.size(); i++)
     // {
@@ -83,7 +85,7 @@ vector<Point2f> subPixel(vector<Point2f> corners)
 {
     int winSize = 5;
     int maxCount = 200;
-    double epsilon = 0.00001;
+    double epsilon = 0.0001;
     cvtColor(src, src_gray, COLOR_BGR2GRAY);
     CornerSubPix(src_gray, corners, winSize, maxCount, epsilon);
 
@@ -100,19 +102,11 @@ vector<Point2f> subPixel(vector<Point2f> corners)
         cout << "[" << i << "]" << std::endl << corners[i].x << std::endl << corners[i].y << endl;
     }
 
-<<<<<<< HEAD:SubpixelDetector.cpp
-    // int radius = 5;
-    // for (size_t i = 0; i < corners.size(); i++)
-    // {
-    //     circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
-    // }
-=======
     int radius = 5;
     for (size_t i = 0; i < corners.size(); i++)
     {
-        // circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
+        circle(cp, corners[i], radius, Scalar(rng.uniform(0, 255), rng.uniform(0, 256), rng.uniform(0, 256)), FILLED);
     }
->>>>>>> edc70be1084697982483fa60823bd55b44aa2385:baseline_opencv.cpp
 
     return corners;
 }

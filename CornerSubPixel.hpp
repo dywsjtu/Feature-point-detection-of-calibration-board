@@ -62,6 +62,9 @@ void CornerSubPix(cv::Mat src, std::vector<cv::Point2f> &corners,
             double scale = 1.0 / det;
             double dx = c * scale * bb1 - b * scale * bb2;
             double dy = a * scale * bb2 - b * scale * bb1;
+            // std::cout.precision(10);
+            // std::cout << "x: " << cI.x << ", y: " << cI.y << std::endl;
+            // std::cout.precision(6);
             cI.x = (float)(cI.x + dx);
             cI.y = (float)(cI.y + dy);
             if (dx * dx + dy * dy < eps || cI.x < 0 || cI.x >= src.cols || cI.y < 0 || cI.y >= src.rows)
